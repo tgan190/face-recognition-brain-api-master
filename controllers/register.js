@@ -13,6 +13,7 @@ const registerHandler = (db, bcrypt) => (req, res) => {
       .into('login')
       .returning('email')
       .then(loginEmail => {
+        console.log('loginEmail:',loginEmail);
         return trx('users')
           .returning('*')
           .insert({
@@ -21,13 +22,15 @@ const registerHandler = (db, bcrypt) => (req, res) => {
             joined: new Date()
           })
           .then(user => {
+            console.log('user: ',user);
             res.json(user[0]);
           })
       })
       .then(trx.commit)
       .catch(trx.rollback)
     })
-    .catch(err => res.status(400).json('unable to register'))
+    .catch(err => {console.log(err); 
+      res.status(400).json(err);})
 }
 
 module.exports = {
